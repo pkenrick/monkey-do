@@ -5,11 +5,12 @@ class AppDelegate
     # splash_controller.view.backgroundColor = UIColor.whiteColor
 
     # navigationController = UINavigationController.alloc.initWithRootViewController(rootViewController)
-
+    
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
     @window.rootViewController = splash_controller
     @window.makeKeyAndVisible
 
     true
   end
+
 end
