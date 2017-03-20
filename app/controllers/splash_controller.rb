@@ -31,7 +31,6 @@ class SplashController < UIViewController
     title_label.font = UIFont.fontWithName("Chalkduster", size: 100)
     title_label.adjustsFontSizeToFitWidth = true
     title_label.numberOfLines = 0
-    # title_label.backgroundColor = UIColor.yellowColor
     title_label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
 
     self.view.addSubview(title_label)
@@ -41,7 +40,6 @@ class SplashController < UIViewController
     slogan_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
     slogan_label.sizeToFit
     slogan_label.center = [self.view.frame.size.width / 2, title_label.frame.origin.y + title_label.frame.size.height + title_label.frame.size.height / 2]
-    # slogan_label.backgroundColor = UIColor.yellowColor
     slogan_label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
 
     self.view.addSubview(slogan_label)
@@ -66,8 +64,8 @@ class SplashController < UIViewController
   end
 
   def start_todo_list
-    private_list_controller = TodoListController.alloc.initWithNibName(nil, bundle:nil)
-    shared_list_controller = TodoListController.alloc.initWithNibName(nil, bundle:nil)
+    private_list_controller = TodoListController.alloc.initWithType('private')
+    shared_list_controller = TodoListController.alloc.initWithType('shared')
     nav_controller_private_list = UINavigationController.alloc.initWithRootViewController(private_list_controller)
     nav_controller_shared_list = UINavigationController.alloc.initWithRootViewController(shared_list_controller)
     tab_controller = UITabBarController.alloc.initWithNibName(nil, bundle: nil)

@@ -32,18 +32,18 @@ class Task
   # So far I've used "task", "taskx"
   TASK_KEY = "list"
 
-  def self.save_tasks(list)
+  def self.save_tasks(list_key, list)
     tasks_as_data = list.map do |task|
       NSKeyedArchiver.archivedDataWithRootObject(task)
     end
     defaults = NSUserDefaults.standardUserDefaults
-    defaults.setObject(tasks_as_data, forKey: TASK_KEY)
-    tasks_as_data = defaults.arrayForKey(TASK_KEY)
+    defaults.setObject(tasks_as_data, forKey: list_key)
+    tasks_as_data = defaults.arrayForKey(list_key)
   end
 
-  def self.load_tasks
+  def self.load_tasks(list_key)
     defaults = NSUserDefaults.standardUserDefaults
-    tasks_as_data = defaults.objectForKey(TASK_KEY)
+    tasks_as_data = defaults.objectForKey(list_key)
     return [] if tasks_as_data == nil
     list = tasks_as_data.map do |encoded_task|
       NSKeyedUnarchiver.unarchiveObjectWithData(encoded_task)

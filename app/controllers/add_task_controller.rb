@@ -102,8 +102,8 @@ class AddTaskController < UIViewController
     new_task.due_date = @due_date_field.text
     new_task.notes = @notes_field.text
     new_task.completed = false
-    self.parent_controller.data << new_task
-    Task.save_tasks(self.parent_controller.data)
+    self.parent_controller.list << new_task
+    Task.save_tasks(self.parent_controller.type, self.parent_controller.list)
     self.parent_controller.table.reloadData
     self.dismissViewControllerAnimated(true, completion: lambda {})
   end

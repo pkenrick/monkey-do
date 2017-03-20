@@ -1,13 +1,15 @@
 class TodoListController < UIViewController
 
-  attr_accessor :data, :table, :defaults, :background_image_view, :monkey_boy, :monkey_girl, :title_label, :subtitle_label
+  attr_accessor :list, :type, :table, :defaults, :background_image_view, :monkey_boy, :monkey_girl, :title_label, :subtitle_label
 
-  def initWithNibName(name, bundle: bundle)
-    super
+  def initWithType(type)
+    self.initWithNibName(nil, bundle: nil)
 
-    self.title = "My List"
-    self.tabBarItem = UITabBarItem.alloc.initWithTitle("My List", image: UIImage.imageNamed("monkeyIcon.png"), tag: 1)
-    self.navigationItem.title = "Monkey-Do!"
+    @type = type
+
+    # self.title = "My List"
+    self.tabBarItem = UITabBarItem.alloc.initWithTitle("#{type.capitalize} List", image: UIImage.imageNamed("monkeyIcon.png"), tag: 1)
+    self.navigationItem.title = "#{type.capitalize} List"
 
     UIGraphicsBeginImageContext(self.view.frame.size)
     image = UIImage.imageNamed("blue_pink_clear.jpg").drawInRect(self.view.bounds)
@@ -54,7 +56,7 @@ class TodoListController < UIViewController
 
     @title_label = UILabel.alloc.init
     title_label.font = UIFont.fontWithName("AmericanTypewriter", size: 40)
-    title_label.text = "Shared List"
+    title_label.text = "#{@type.capitalize} List"
     header_view.addSubview(title_label)
 
     title_label.translatesAutoresizingMaskIntoConstraints = false
@@ -65,11 +67,33 @@ class TodoListController < UIViewController
     header_view.addConstraint(title_label_left)
     header_view.addConstraint(title_label_width)
 
+    if @type == 'shared'
+      sync_button = UIButton.buttonWithType(UIButtonTypeCustom)
+      # sync_button.backgroundColor = UIColor.blueColor
+      sync_button.setBackgroundImage(UIImage.imageNamed("sync_button.png"), forState: UIControlStateNormal)
+      header_view.addSubview(sync_button)
+
+      sync_button.translatesAutoresizingMaskIntoConstraints = false
+      sync_button_top = NSLayoutConstraint.constraintWithItem(sync_button, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: header_view, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 5.0)
+      sync_button_right = NSLayoutConstraint.constraintWithItem(sync_button, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: header_view, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
+      sync_button_height = NSLayoutConstraint.constraintWithItem(sync_button, attribute: NSLayoutAttributeHeight, relatedBy: NSLayoutRelationEqual, toItem: nil, attribute: 0, multiplier: 1.0, constant: 40.0)
+      sync_button_width = NSLayoutConstraint.constraintWithItem(sync_button, attribute: NSLayoutAttributeWidth, relatedBy: NSLayoutRelationEqual, toItem: nil, attribute: 0, multiplier: 1.0, constant: 60.0)
+      # sync_button.frame = [[sync_button.frame.origin.x, sync_button.frame.origin.y],[60, 40]]
+      # sync_button_right = NSLayoutConstraint.constraintWithItem(sync_button, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: header_view, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0.0)
+      header_view.addConstraint(sync_button_top)
+      header_view.addConstraint(sync_button_right)
+      header_view.addConstraint(sync_button_height)
+      header_view.addConstraint(sync_button_width)
+      sync_button
+      # @monkey_boy = UIImageView.alloc.initWithImage(UIImage.imageNamed("MonkeyBoy.png"))
+
+    end
+
     @subtitle_label = UILabel.alloc.init
     @subtitle_label.font = UIFont.fontWithName("Arial-ItalicMT", size: 20)
     @subtitle_label.lineBreakMode = NSLineBreakByWordWrapping;
     @subtitle_label.numberOfLines = 0
-    @subtitle_label.text = "This list is also accessible by your partner"
+    @subtitle_label.text = (@type == 'private') ? "This is is accessible only by you" : "This list is also accessible by your partner"
     header_view.addSubview(@subtitle_label)
 
     subtitle_label.translatesAutoresizingMaskIntoConstraints = false
@@ -89,7 +113,7 @@ class TodoListController < UIViewController
     @table.dataSource = self
     @table.delegate = self
 
-    @data = Task.load_tasks
+    @list = Task.load_tasks(@type)
 
   end
 
@@ -105,7 +129,7 @@ class TodoListController < UIViewController
   end
 
   def tableView(tableView, numberOfRowsInSection: section)
-    @data.count
+    @list.count
   end
 
   def tableView(tableView, cellForRowAtIndexPath: indexPath)
@@ -116,10 +140,10 @@ class TodoListController < UIViewController
 
     # cell ||= CustomCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier: reuseIdentifier)
 
-    cell.textLabel.text = @data[indexPath.row].title
+    cell.textLabel.text = @list[indexPath.row].title
     cell.textLabel.font = UIFont.fontWithName("AmericanTypewriter", size: 15)
     cell.textLabel.textColor = UIColor.blackColor
-    cell.detailTextLabel.text = @data[indexPath.row].due_date
+    cell.detailTextLabel.text = @list[indexPath.row].due_date
     cell.imageView.image = UIImage.imageNamed("monkeyIcon.png")
     cell.backgroundColor = UIColor.clearColor
     cell_background_view = UIImageView.alloc.initWithImage(cellBackgroundForRowAtIndexPath(indexPath))
@@ -130,7 +154,7 @@ class TodoListController < UIViewController
 
   def tableView(tableView, didSelectRowAtIndexPath: indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated: true)
-    task = @data[indexPath.row]
+    task = @list[indexPath.row]
 
     show_task_controller = ShowTaskController.alloc.initWithTask(task)
     show_task_controller.parent_controller = self
@@ -140,7 +164,7 @@ class TodoListController < UIViewController
   def cellBackgroundForRowAtIndexPath(indexPath)
     if indexPath.row == 0
       UIImage.imageNamed("white_cell_top.png")
-    elsif indexPath.row == @data.length - 1
+    elsif indexPath.row == @list.length - 1
       UIImage.imageNamed("white_cell_bottom.png")
     else
       UIImage.imageNamed("white_cell_middle.png")
@@ -149,8 +173,8 @@ class TodoListController < UIViewController
 
   editingStyle = UITableViewCellEditingStyleDelete
   def tableView(tableView, commitEditingStyle: editingStyle, forRowAtIndexPath: indexPath)
-    @data.delete_at(indexPath.row)
-    Task.save_tasks(@data)
+    @list.delete_at(indexPath.row)
+    Task.save_tasks(@type, @list)
     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimationFade)
   end
 
