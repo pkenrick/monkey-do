@@ -23,42 +23,109 @@ class ShowTaskController < UIViewController
     edit_task_button = UIBarButtonItem.alloc.initWithTitle("Edit", style: UIBarButtonItemStyleBordered, target: self, action: "edit_task")
     self.navigationItem.rightBarButtonItem = edit_task_button
 
-    title_label = UILabel.alloc.initWithFrame(CGRectZero)
+    # Task title
+
+    title_label = UILabel.alloc.init
     title_label.text = "Title"
     title_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
+    title_label.backgroundColor = UIColor.redColor
     title_label.sizeToFit
-    title_label.frame = [[(self.view.frame.size.width / 3) - title_label.frame.size.width - 10, self.view.frame.size.height / 10 + nav_bar_height], title_label.frame.size]
     self.view.addSubview(title_label)
 
-    @title = UITextLabel.alloc.initWithFrame(CGRectZero)
+    title_label.translatesAutoresizingMaskIntoConstraints = false
+    title_label_top = NSLayoutConstraint.constraintWithItem(title_label, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: self.view, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: nav_bar_height + 10.0)
+    title_label_right = NSLayoutConstraint.constraintWithItem(title_label, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: self.view, attribute: NSLayoutAttributeLeft, multiplier: 1.0, constant: self.view.size.width / 4)
+    self.view.addConstraint(title_label_top)
+    self.view.addConstraint(title_label_right)
+
+    @title = UILabel.alloc.init
     @title.text = @task.title
     @title.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
-    @title.sizeToFit
-    @title.frame = [[self.view.frame.size.width / 3 + 10, title_label.frame.origin.y], @title.frame.size]
-
-    # @title.frame = [[self.view.frame.size.width / 3 + 10, title_label.frame.origin.y],[self.view.frame.size.width / 3 * 1.5, 30]]
+    @title.backgroundColor = UIColor.redColor
+    @title.lineBreakMode = NSLineBreakByWordWrapping;
+    @title.numberOfLines = 0
     self.view.addSubview(@title)
 
-    due_date_label = UILabel.alloc.initWithFrame(CGRectZero)
+    @title.translatesAutoresizingMaskIntoConstraints = false
+    title_top = NSLayoutConstraint.constraintWithItem(@title, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: title_label, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0.0)
+    title_left = NSLayoutConstraint.constraintWithItem(@title, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: title_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 20.0)
+    title_right = NSLayoutConstraint.constraintWithItem(@title, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: self.view, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: -10.0)
+    self.view.addConstraint(title_top)
+    self.view.addConstraint(title_left)
+    self.view.addConstraint(title_right)
+
+    # Task due date
+
+    due_date_label = UILabel.alloc.init
     due_date_label.text = "Due date"
     due_date_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
+    due_date_label.backgroundColor = UIColor.redColor
     due_date_label.sizeToFit
-    due_date_label.frame = [[(self.view.frame.size.width / 3) - due_date_label.frame.size.width - 10, self.view.frame.size.height / 10 * 2 + nav_bar_height], due_date_label.frame.size]
     self.view.addSubview(due_date_label)
 
-    @due_date = UILabel.alloc.initWithFrame(CGRectZero)
+    due_date_label.translatesAutoresizingMaskIntoConstraints = false
+    due_date_label_top = NSLayoutConstraint.constraintWithItem(due_date_label, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @title, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 10.0)
+    due_date_label_right = NSLayoutConstraint.constraintWithItem(due_date_label, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: title_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
+    self.view.addConstraint(due_date_label_top)
+    self.view.addConstraint(due_date_label_right)
+
+    @due_date = UILabel.alloc.init
     @due_date.text = @task.due_date
     @due_date.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
-    @due_date.sizeToFit
-    @due_date.frame = [[self.view.frame.size.width / 3 + 10, due_date_label.frame.origin.y], @due_date.frame.size]
+    @due_date.backgroundColor = UIColor.redColor
     self.view.addSubview(@due_date)
 
-    notes_label = UILabel.alloc.initWithFrame(CGRectZero)
+    @due_date.translatesAutoresizingMaskIntoConstraints = false
+    due_date_top = NSLayoutConstraint.constraintWithItem(@due_date, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: due_date_label, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0.0)
+    due_date_left = NSLayoutConstraint.constraintWithItem(@due_date, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: due_date_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 20.0)
+    due_date_right = NSLayoutConstraint.constraintWithItem(@due_date, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: self.view, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: -10.0)
+    self.view.addConstraint(due_date_top)
+    self.view.addConstraint(due_date_left)
+    self.view.addConstraint(due_date_right)
+
+    # Owner
+
+    owner_label = UILabel.alloc.init
+    owner_label.text = "Owner"
+    owner_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
+    owner_label.backgroundColor = UIColor.redColor
+    owner_label.sizeToFit
+    self.view.addSubview(owner_label)
+
+    owner_label.translatesAutoresizingMaskIntoConstraints = false
+    owner_label_top = NSLayoutConstraint.constraintWithItem(owner_label, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: due_date_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 10.0)
+    owner_label_right = NSLayoutConstraint.constraintWithItem(owner_label, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: due_date_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
+    self.view.addConstraint(owner_label_top)
+    self.view.addConstraint(owner_label_right)
+
+    # State
+
+    state_label = UILabel.alloc.init
+    state_label.text = "State"
+    state_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
+    state_label.backgroundColor = UIColor.redColor
+    state_label.sizeToFit
+    self.view.addSubview(state_label)
+
+    state_label.translatesAutoresizingMaskIntoConstraints = false
+    state_label_top = NSLayoutConstraint.constraintWithItem(state_label, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: owner_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 10.0)
+    state_label_right = NSLayoutConstraint.constraintWithItem(state_label, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: owner_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
+    self.view.addConstraint(state_label_top)
+    self.view.addConstraint(state_label_right)
+
+    # Notes
+
+    notes_label = UILabel.alloc.init
     notes_label.text = "Notes"
     notes_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
     notes_label.sizeToFit
-    notes_label.frame = [[(self.view.frame.size.width / 3) - notes_label.frame.size.width - 10, self.view.frame.size.height / 10 * 3 + nav_bar_height], notes_label.frame.size]
     self.view.addSubview(notes_label)
+
+    notes_label.translatesAutoresizingMaskIntoConstraints = false
+    notes_label_top = NSLayoutConstraint.constraintWithItem(notes_label, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: state_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 40.0)
+    notes_label_right = NSLayoutConstraint.constraintWithItem(notes_label, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: state_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
+    self.view.addConstraint(notes_label_top)
+    self.view.addConstraint(notes_label_right)
 
     @notes = UILabel.alloc.initWithFrame(CGRectZero)
     @notes.text = @task.notes

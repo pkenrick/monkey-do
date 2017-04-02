@@ -113,7 +113,7 @@ class EditTaskController < UIViewController
     @task.due_date = @due_date_field.text
     @task.notes = @notes_field.text
     @task.completed = false
-    Task.save_tasks(self.parent_controller.parent_controller.data)
+    Task.save_tasks(self.parent_controller.parent_controller.type, self.parent_controller.parent_controller.list)
     self.parent_controller.task = @task
     self.parent_controller.parent_controller.table.reloadData
     self.dismissViewControllerAnimated(true, completion: lambda {})

@@ -122,7 +122,7 @@ class TodoListController < UIViewController
     header_view = self.table.tableHeaderView
     title_label.setPreferredMaxLayoutWidth(header_view.bounds.size.width - 10)
     subtitle_label.setPreferredMaxLayoutWidth(header_view.bounds.size.width - 10)
-    updated_header_view_height = title_label.intrinsicContentSize.height + 5 + subtitle_label.intrinsicContentSize.height
+    updated_header_view_height = title_label.intrinsicContentSize.height + 5 + subtitle_label.intrinsicContentSize.height + 5
     # tableHeaderView size cannot be set with constraints; the frame must be set explicitally.  Preferably considering the height of its subviews.
     header_view.frame = [header_view.frame.origin,[0,updated_header_view_height]]
     table.tableHeaderView = header_view
@@ -136,19 +136,37 @@ class TodoListController < UIViewController
     reuseIdentifier ||= "CELL_IDENTIFIER"
 
     cell = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier)
-    cell ||= UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier: reuseIdentifier)
-
-    # cell ||= CustomCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier: reuseIdentifier)
+    # cell ||= UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier: reuseIdentifier)
+    cell ||= CustomCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier: reuseIdentifier)
 
     cell.textLabel.text = @list[indexPath.row].title
-    cell.textLabel.font = UIFont.fontWithName("AmericanTypewriter", size: 15)
-    cell.textLabel.textColor = UIColor.blackColor
-    cell.detailTextLabel.text = @list[indexPath.row].due_date
-    cell.imageView.image = UIImage.imageNamed("monkeyIcon.png")
+    # cell.imageView.image = UIImage.imageNamed("Checkbox-complete.png")
+    if @list[indexPath.row].completed == false
+      cell.imageView.setBackgroundImage(UIImage.imageNamed("Checkbox-incomplete.png"), forState: UIControlStateNormal)
+    else
+      cell.imageView.setBackgroundImage(UIImage.imageNamed("Checkbox-complete.png"), forState: UIControlStateNormal)
+    end
+    cell.imageView.tag = indexPath.row
+    cell.imageView.addTarget(self, action: "toggle_complete_task:", forControlEvents: UIControlEventTouchUpInside)
+    cell.dueDate.text = "Due: #{@list[indexPath.row].due_date}"
+    cell.owner.text = "Owner:"
+    cell.owner.sizeToFit
+    if @list[indexPath.row].owner == "Me"
+      cell.ownerLabel.setBackgroundImage(UIImage.imageNamed("me_label.png"), forState: UIControlStateNormal)
+    else
+      cell.ownerLabel.setBackgroundImage(UIImage.imageNamed("partner_label.png"), forState: UIControlStateNormal)
+    end
+    cell.ownerLabel.tag = indexPath.row
+    cell.ownerLabel.addTarget(self, action: "toggle_owner_task:", forControlEvents: UIControlEventTouchUpInside)
+
     cell.backgroundColor = UIColor.clearColor
     cell_background_view = UIImageView.alloc.initWithImage(cellBackgroundForRowAtIndexPath(indexPath))
+
+    cell.postIt.image = UIImage.imageNamed("post_it_no_background.png")
+
     cell.backgroundView = cell_background_view
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator
+
     cell
   end
 
@@ -163,9 +181,9 @@ class TodoListController < UIViewController
 
   def cellBackgroundForRowAtIndexPath(indexPath)
     if indexPath.row == 0
-      UIImage.imageNamed("white_cell_top.png")
+      UIImage.imageNamed("white_cell_middle.png")
     elsif indexPath.row == @list.length - 1
-      UIImage.imageNamed("white_cell_bottom.png")
+      UIImage.imageNamed("white_cell_middle.png")
     else
       UIImage.imageNamed("white_cell_middle.png")
     end
@@ -184,6 +202,27 @@ class TodoListController < UIViewController
     self.presentViewController(UINavigationController.alloc.initWithRootViewController(add_task_controller), animated: true, completion: lambda {})
   end
 
+  def toggle_complete_task(sender)
+    task = @list[sender.tag]
+    if task.completed == false
+      task.completed = true
+    else
+      task.completed = false
+    end
+    Task.save_tasks(type, list)
+    table.reloadData
+  end
+
+  def toggle_owner_task(sender)
+    task = @list[sender.tag]
+    if task.owner == "Me"
+      task.owner = "Partner"
+    else
+      task.owner = "Me"
+    end
+    Task.save_tasks(type, list)
+    table.reloadData
+  end
 
 
 

@@ -1,6 +1,6 @@
 class Task
 
-  PROPERTIES = [:title, :notes, :due_date, :completed]
+  PROPERTIES = [:title, :due_date, :owner, :notes, :completed]
 
   PROPERTIES.each do |property|
     attr_accessor property
