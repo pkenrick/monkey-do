@@ -43,20 +43,20 @@ class AddTaskController < UIViewController
     @due_date_field.frame = [[self.view.frame.size.width / 3 + 10, due_date_label.frame.origin.y],[self.view.frame.size.width / 3 * 1.5, 30]]
     self.view.addSubview(@due_date_field)
 
-    notes_label = UILabel.alloc.initWithFrame(CGRectZero)
-    notes_label.text = "Notes"
-    notes_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
-    notes_label.sizeToFit
-    notes_label.frame = [[(self.view.frame.size.width / 3) - notes_label.frame.size.width - 10, self.view.frame.size.height / 10 * 3 + nav_bar_height], notes_label.frame.size]
-    self.view.addSubview(notes_label)
-
-    @notes_field = UITextView.alloc.initWithFrame([[self.view.frame.size.width / 3 + 10, notes_label.frame.origin.y],[self.view.frame.size.width / 3 * 1.5, 150]], textContainer: nil)
-    @notes_field.text = "e.g. 'Shop was closed today.  Will get this tomorrow.'"
-    @notes_field.font = UIFont.systemFontOfSize(17)
-    @notes_field.textColor = UIColor.colorWithRed(199.0/255.0, green:199.0/255.0, blue:205.0/255.0, alpha:1.0)
-    self.view.addSubview(@notes_field)
-
-    @notes_field.delegate = self
+    # notes_label = UILabel.alloc.initWithFrame(CGRectZero)
+    # notes_label.text = "Notes"
+    # notes_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
+    # notes_label.sizeToFit
+    # notes_label.frame = [[(self.view.frame.size.width / 3) - notes_label.frame.size.width - 10, self.view.frame.size.height / 10 * 3 + nav_bar_height], notes_label.frame.size]
+    # self.view.addSubview(notes_label)
+    #
+    # @notes_field = UITextView.alloc.initWithFrame([[self.view.frame.size.width / 3 + 10, notes_label.frame.origin.y],[self.view.frame.size.width / 3 * 1.5, 150]], textContainer: nil)
+    # @notes_field.text = "e.g. 'Shop was closed today.  Will get this tomorrow.'"
+    # @notes_field.font = UIFont.systemFontOfSize(17)
+    # @notes_field.textColor = UIColor.colorWithRed(199.0/255.0, green:199.0/255.0, blue:205.0/255.0, alpha:1.0)
+    # self.view.addSubview(@notes_field)
+    #
+    # @notes_field.delegate = self
 
     gesture_recogizer = UITapGestureRecognizer.alloc.initWithTarget(self, action: "dismiss_keyboard")
     gesture_recogizer.cancelsTouchesInView = false
@@ -101,7 +101,7 @@ class AddTaskController < UIViewController
     new_task.title = @title_field.text
     new_task.due_date = @due_date_field.text
     new_task.owner = "Me"
-    new_task.notes = @notes_field.text
+    new_task.notes = ["This is the first note", "This is the second note", "Fourth note", "And of course this will be the fifth and final note for this task"]
     new_task.completed = false
     self.parent_controller.list << new_task
     Task.save_tasks(self.parent_controller.type, self.parent_controller.list)
