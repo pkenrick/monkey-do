@@ -101,7 +101,7 @@ class AddTaskController < UIViewController
     new_task.title = @title_field.text
     new_task.due_date = @due_date_field.text
     new_task.owner = "Me"
-    new_task.notes = ["This is the first note", "This is the second note", "Fourth note", "And of course this will be the fifth and final note for this task"]
+    new_task.notes = ["This is the first note"]
     new_task.completed = false
     self.parent_controller.list << new_task
     Task.save_tasks(self.parent_controller.type, self.parent_controller.list)

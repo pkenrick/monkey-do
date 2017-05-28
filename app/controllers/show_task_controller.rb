@@ -22,9 +22,7 @@ class ShowTaskController < UIViewController
     self.view.addSubview(background_image_view)
 
     @content_view = UIView.alloc.initWithFrame(self.view.bounds)
-    @content_view.backgroundColor = UIColor.redColor
     @scroll_view = UIScrollView.alloc.initWithFrame(self.view.bounds)
-    @scroll_view.backgroundColor = UIColor.greenColor
     @scroll_view.setContentSize([self.view.size.width, self.view.size.height])
     @scroll_view.addSubview(@content_view)
     self.view.addSubview(@scroll_view)
@@ -155,43 +153,102 @@ class ShowTaskController < UIViewController
 
     # Notes
 
-    notes_label = UILabel.alloc.init
-    notes_label.text = "Notes"
-    notes_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
-    notes_label.sizeToFit
-    @content_view.addSubview(notes_label)
+    @notes_label = UILabel.alloc.init
+    @notes_label.backgroundColor = UIColor.redColor
+    @notes_label.text = "Notes"
+    @notes_label.font = UIFont.fontWithName("AmericanTypewriter", size: 20)
+    @notes_label.sizeToFit
+    @content_view.addSubview(@notes_label)
 
-    notes_label.translatesAutoresizingMaskIntoConstraints = false
-    notes_label_top = NSLayoutConstraint.constraintWithItem(notes_label, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: state_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 40.0)
-    notes_label_right = NSLayoutConstraint.constraintWithItem(notes_label, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: state_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
+    @notes_label.translatesAutoresizingMaskIntoConstraints = false
+    notes_label_top = NSLayoutConstraint.constraintWithItem(@notes_label, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: state_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 40.0)
+    notes_label_right = NSLayoutConstraint.constraintWithItem(@notes_label, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: state_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
     @content_view.addConstraint(notes_label_top)
     @content_view.addConstraint(notes_label_right)
 
-    @notes = UILabel.alloc.init
-    mutable_attributed_string = NSMutableAttributedString.alloc.initWithString("")
+    # @notes = UILabel.alloc.init
+    # mutable_attributed_string = NSMutableAttributedString.alloc.initWithString("")
+    # @task.notes.each_with_index do |note, index|
+    #   note_text = "#{index + 1} - #{note}"
+    #   if index == 0
+    #     mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(note_text), atIndex: 0)
+    #     mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(" X"), atIndex: note_text.length)
+    #   else
+    #     mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString("\n\n"), atIndex: mutable_attributed_string.length)
+    #     mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(note_text), atIndex: mutable_attributed_string.length)
+    #     mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(" X"), atIndex: mutable_attributed_string.length)
+    #   end
+    # end
+    # @notes.attributedText = mutable_attributed_string
+    # @notes.lineBreakMode = NSLineBreakByWordWrapping;
+    # @notes.numberOfLines = 0
+    # @content_view.addSubview(@notes)
+    #
+    # @notes.translatesAutoresizingMaskIntoConstraints = false
+    # notes_top = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: notes_label, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0.0)
+    # notes_left = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: notes_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 20.0)
+    # notes_right = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: @content_view, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: -10.0)
+    # @content_view.addConstraint(notes_top)
+    # @content_view.addConstraint(notes_left)
+    # @content_view.addConstraint(notes_right)
+
+
+
+    @notes = UIView.alloc.init
+    @last_note_box = nil
+    @total_note_height = 0
+
     @task.notes.each_with_index do |note, index|
-      note_text = "#{index + 1} - #{note}"
+      note_box = UILabel.alloc.init
+      note_box.text = "#{index + 1} - #{note}"
+      note_box.lineBreakMode = NSLineBreakByWordWrapping;
+      note_box.numberOfLines = 0
+      @content_view.addSubview(note_box)
+
+      note_box.translatesAutoresizingMaskIntoConstraints = false
       if index == 0
-        mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(note_text), atIndex: 0)
-        mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(" X"), atIndex: note_text.length)
+        note_box_top = NSLayoutConstraint.constraintWithItem(note_box, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 20.0)
+        note_box_left = NSLayoutConstraint.constraintWithItem(note_box, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 20.0)
+        note_box_right = NSLayoutConstraint.constraintWithItem(note_box, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: @content_view, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: -10.0)
+        @content_view.addConstraint(note_box_top)
+        @content_view.addConstraint(note_box_left)
+        @content_view.addConstraint(note_box_right)
       else
-        mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString("\n\n"), atIndex: mutable_attributed_string.length)
-        mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(note_text), atIndex: mutable_attributed_string.length)
-        mutable_attributed_string.insertAttributedString(NSAttributedString.alloc.initWithString(" X"), atIndex: mutable_attributed_string.length)
+        note_box_top = NSLayoutConstraint.constraintWithItem(note_box, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @last_note_box, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 20.0)
+        note_box_left = NSLayoutConstraint.constraintWithItem(note_box, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: @last_note_box, attribute: NSLayoutAttributeLeft, multiplier: 1.0, constant: 0.0)
+        note_box_right = NSLayoutConstraint.constraintWithItem(note_box, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: @last_note_box, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 0.0)
+        @content_view.addConstraint(note_box_top)
+        @content_view.addConstraint(note_box_left)
+        @content_view.addConstraint(note_box_right)
       end
+
+      # trash_can = UIButton.buttonWithType(UIButtonTypeCustom)
+      # trash_can.setBackgroundImage(UIImage.imageNamed("Trash_Can-512.png"), forState: UIControlStateNormal)
+      # trash_can.addTarget(self, action: "delete", forControlEvents: UIControlEventTouchUpInside)
+      # @content_view.addSubview(@trash_can)
+      #
+      # trash_can_top = NSLayoutConstraint.constraintWithItem(trash_can, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: note_box, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0.0)
+      # trash_can_left = NSLayoutConstraint.constraintWithItem(trash_can, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: note_box, attribute: NSLayoutAttributeLeft, multiplier: 1.0, constant: 0.0)
+      # @notes.addConstraint(trash_can_top)
+      # @notes.addConstraint(trash_can_left)
+
+      note_box.setNeedsLayout
+      note_box.layoutIfNeeded
+      @last_note_box = note_box
+      @total_note_height += + 20 + note_box.frame.size.height
     end
-    @notes.attributedText = mutable_attributed_string
-    @notes.lineBreakMode = NSLineBreakByWordWrapping;
-    @notes.numberOfLines = 0
+
     @content_view.addSubview(@notes)
 
     @notes.translatesAutoresizingMaskIntoConstraints = false
-    notes_top = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: notes_label, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0.0)
-    notes_left = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: notes_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 20.0)
+    notes_top = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 20.0)
+    notes_left = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 20.0)
     notes_right = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: @content_view, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: -10.0)
+    notes_bottom = NSLayoutConstraint.constraintWithItem(@notes, attribute: NSLayoutAttributeBottom, relatedBy: NSLayoutRelationEqual, toItem: @content_view, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 0.0)
     @content_view.addConstraint(notes_top)
     @content_view.addConstraint(notes_left)
     @content_view.addConstraint(notes_right)
+    @content_view.addConstraint(notes_bottom)
 
     @add_note_button = UIButton.buttonWithType(UIButtonTypeCustom)
     @add_note_button.setBackgroundImage(UIImage.imageNamed("button_add_note.png"), forState: UIControlStateNormal)
@@ -199,8 +256,8 @@ class ShowTaskController < UIViewController
     @content_view.addSubview(@add_note_button)
 
     @add_note_button.translatesAutoresizingMaskIntoConstraints = false
-    add_note_button_top = NSLayoutConstraint.constraintWithItem(@add_note_button, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @notes, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 20)
-    add_note_button_left = NSLayoutConstraint.constraintWithItem(@add_note_button, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: @notes, attribute: NSLayoutAttributeLeft, multiplier: 1.0, constant: 0.0)
+    add_note_button_top = NSLayoutConstraint.constraintWithItem(@add_note_button, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @last_note_box, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 20)
+    add_note_button_left = NSLayoutConstraint.constraintWithItem(@add_note_button, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: @last_note_box, attribute: NSLayoutAttributeLeft, multiplier: 1.0, constant: 0.0)
     add_note_button_width = NSLayoutConstraint.constraintWithItem(@add_note_button, attribute: NSLayoutAttributeWidth, relatedBy: NSLayoutRelationEqual, toItem: nil, attribute: 0, multiplier: 1.0, constant: 80.0)
     add_note_button_height = NSLayoutConstraint.constraintWithItem(@add_note_button, attribute: NSLayoutAttributeHeight, relatedBy: NSLayoutRelationEqual, toItem: nil, attribute: 0, multiplier: 1.0, constant: 30.0)
     @content_view.addConstraint(add_note_button_top)
@@ -227,8 +284,8 @@ class ShowTaskController < UIViewController
     @content_view.addSubview(@separatorLine2)
 
     @separatorLine2.translatesAutoresizingMaskIntoConstraints = false
-    separatorLine2_top = NSLayoutConstraint.constraintWithItem(@separatorLine2, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: notes_label, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0)
-    separatorLine2_left = NSLayoutConstraint.constraintWithItem(@separatorLine2, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: notes_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 10.0)
+    separatorLine2_top = NSLayoutConstraint.constraintWithItem(@separatorLine2, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeTop, multiplier: 1.0, constant: 0)
+    separatorLine2_left = NSLayoutConstraint.constraintWithItem(@separatorLine2, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: 10.0)
     separatorLine2_width = NSLayoutConstraint.constraintWithItem(@separatorLine2, attribute: NSLayoutAttributeWidth, relatedBy: NSLayoutRelationEqual, toItem: nil, attribute: 0, multiplier: 1.0, constant: 1.0)
     separatorLine2_bottom = NSLayoutConstraint.constraintWithItem(@separatorLine2, attribute: NSLayoutAttributeBottom, relatedBy: NSLayoutRelationEqual, toItem: @notes, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 0.0)
     @content_view.addConstraint(separatorLine2_top)
@@ -236,28 +293,29 @@ class ShowTaskController < UIViewController
     @content_view.addConstraint(separatorLine2_width)
     @content_view.addConstraint(separatorLine2_bottom)
 
+    @separatorLine3 = UIView.alloc.init
+    @separatorLine3.backgroundColor = UIColor.lightGrayColor
+    @content_view.addSubview(@separatorLine3)
+
+    @separatorLine3.translatesAutoresizingMaskIntoConstraints = false
+    separatorLine3_top = NSLayoutConstraint.constraintWithItem(@separatorLine3, attribute: NSLayoutAttributeTop, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeBottom, multiplier: 1.0, constant: 10)
+    separatorLine3_left = NSLayoutConstraint.constraintWithItem(@separatorLine3, attribute: NSLayoutAttributeLeft, relatedBy: NSLayoutRelationEqual, toItem: @notes_label, attribute: NSLayoutAttributeLeft, multiplier: 1.0, constant: 0.0)
+    separatorLine3_right = NSLayoutConstraint.constraintWithItem(@separatorLine3, attribute: NSLayoutAttributeRight, relatedBy: NSLayoutRelationEqual, toItem: @content_view, attribute: NSLayoutAttributeRight, multiplier: 1.0, constant: -20.0)
+    separatorLine3_height = NSLayoutConstraint.constraintWithItem(@separatorLine3, attribute: NSLayoutAttributeHeight, relatedBy: NSLayoutRelationEqual, toItem: nil, attribute: 0, multiplier: 1.0, constant: 1.0)
+    @content_view.addConstraint(separatorLine3_top)
+    @content_view.addConstraint(separatorLine3_left)
+    @content_view.addConstraint(separatorLine3_right)
+    @content_view.addConstraint(separatorLine3_height)
+
   end
 
   def viewWillAppear(animated)
     super
-    puts "viewWillAppear method"
-    # @title.text = @task.title
-    # @title.sizeToFit
-    # @due_date.text = @task.due_date
-    # @due_date.sizeToFit
-    # @notes.text = ""
-    # @task.notes.each_with_index do |note, index|
-    #   @notes.text += "\n\n" if index > 0
-    #   @notes.text += "- #{note}"
-    # end
-    # @notes.text = ''
-    # @notes.sizeToFit
   end
 
   def viewDidLayoutSubviews
     super
-    puts "viewDidLayoutSubviews method"
-    content_height = @nav_bar_height + 30 + @title.size.height + 20 + @due_date.size.height + 20 + @owner.size.height + 20 + @state.size.height + 40 + @notes.size.height + 20 + @add_note_button.size.height + 20 + @tab_bar_height
+    content_height = @nav_bar_height + 30 + @title.size.height + 20 + @due_date.size.height + 20 + @owner.size.height + 20 + @state.size.height + 40 + @notes_label.size.height + @total_note_height + 20 + @add_note_button.size.height + 20 + @tab_bar_height
     @content_view.frame = [@content_view.frame.origin,[self.view.size.width, content_height]]
     @scroll_view.setContentSize([self.view.size.width, content_height])
   end
@@ -269,7 +327,6 @@ class ShowTaskController < UIViewController
   end
 
   def add_note
-    puts "adding note"
     add_note_controller = UIAlertController.alertControllerWithTitle("New Note", message: nil, preferredStyle: UIAlertControllerStyleAlert)
 
     note_field = UITextField.alloc.init
@@ -287,14 +344,18 @@ class ShowTaskController < UIViewController
     self.presentViewController(add_note_controller, animated: true, completion: lambda {})
   end
 
+  def delete
+    puts "delete"
+  end
+
   def save_note(note)
-    @task.notes << note
-    Task.save_tasks(parent_controller.type, parent_controller.list)
-    # @task.notes.each do |note|
-    #   puts note
-    # end
-    self.viewDidLoad
-    self.viewWillAppear(true)
+    if !note.empty?
+      note = "#{note} [#{Time.now.strftime("%d/%m/%Y %H:%M")}]"
+      @task.notes << note
+      Task.save_tasks(parent_controller.type, parent_controller.list)
+      self.viewDidLoad
+      self.viewWillAppear(true)
+    end
   end
 
   def cancel_note

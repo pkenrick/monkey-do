@@ -77,6 +77,7 @@ class CustomCell < UITableViewCell
     self.contentView.addConstraint(dueDate_width)
 
     @owner.font = UIFont.fontWithName("Arial", size: 15)
+    # @owner.backgroundColor = UIColor.yellowColor
     @owner.textColor = UIColor.grayColor
     self.contentView.addSubview(@owner)
 
@@ -90,6 +91,7 @@ class CustomCell < UITableViewCell
     self.contentView.addConstraint(owner_height)
     # self.contentView.addConstraint(owner_width)
 
+    # @ownerLabel.backgroundColor = UIColor.redColor
     self.contentView.addSubview(@ownerLabel)
 
     @ownerLabel.translatesAutoresizingMaskIntoConstraints = false
